@@ -1,15 +1,26 @@
 import 'package:flutter_ninja/timerModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CountDownTimer {
   int work = 1;
   int shortBreak = 5;
   int longBreak = 15;
   double remainingPotion = 1; //ranges from 1 - 0;
-  bool _isActive = true;
+  bool _isActive = false;
   Duration _remainingTime;
   Duration _fullTime;
 
-  void startWork() {
+  Future readSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    work = prefs.getInt('workTime') == null ? 30 : prefs.getInt('workTime');
+    shortBreak =
+        prefs.getInt('shortBreak') == null ? 30 : prefs.getInt('shortBreak');
+    longBreak =
+        prefs.getInt('longBreak') == null ? 30 : prefs.getInt('longBreak');
+  }
+
+  void startWork() async {
+    await readSettings();
     _remainingTime = Duration(minutes: this.work, seconds: 0);
     _fullTime = _remainingTime;
     remainingPotion = 1;

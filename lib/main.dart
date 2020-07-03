@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ninja/settings.dart';
 import 'package:flutter_ninja/timer.dart';
 import 'package:flutter_ninja/timerModel.dart';
 import 'package:flutter_ninja/widgets.dart';
@@ -14,20 +15,43 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Productivity App",
       theme: ThemeData(primarySwatch: Colors.blueGrey),
-      home: ProductivityHome(),
+      home: TimerHomePage(),
     );
   }
 }
 
-class ProductivityHome extends StatelessWidget {
+class TimerHomePage extends StatelessWidget {
   final double _defaultPadding = 7.0;
   final CountDownTimer timer = CountDownTimer();
+  void goToSettings(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<PopupMenuItem<String>> menuItems = List<PopupMenuItem<String>>();
+
+    menuItems.add(PopupMenuItem(
+      child: Text("Settings"),
+      value: "Settings",
+    ));
+
     return Scaffold(
       appBar: AppBar(
         title: Text("My Work Timer"),
+        actions: <Widget>[
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) {
+              return menuItems.toList();
+            },
+            onSelected: (value) {
+              if (value == 'Settings') {
+                goToSettings(context);
+              }
+            },
+          ),
+        ],
       ),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -77,7 +101,7 @@ class ProductivityHome extends StatelessWidget {
               StreamBuilder<TimerModel>(
                   stream: timer.stream(),
                   builder: (context, snapshot) {
-                    print("building");
+                    // print("building");
                     return Expanded(
                       child: CircularPercentIndicator(
                         radius: availableHeight / 2,
