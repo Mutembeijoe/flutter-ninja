@@ -4,18 +4,18 @@ class ProductivityButton extends StatelessWidget {
   final double size;
   final Color color;
   final String text;
-  final VoidCallback callback;
+  final VoidCallback onPressed;
 
   ProductivityButton(
       {@required this.color,
-      @required this.callback,
+      @required this.onPressed,
       @required this.size,
       @required this.text});
 
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      onPressed: this.callback,
+      onPressed: this.onPressed,
       color: this.color,
       child: Text(
         this.text,

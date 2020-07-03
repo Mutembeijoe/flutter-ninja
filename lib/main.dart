@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ninja/timer.dart';
+import 'package:flutter_ninja/timerModel.dart';
 import 'package:flutter_ninja/widgets.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -19,6 +21,8 @@ class MyApp extends StatelessWidget {
 
 class ProductivityHome extends StatelessWidget {
   final double _defaultPadding = 7.0;
+  final CountDownTimer timer = CountDownTimer();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +44,7 @@ class ProductivityHome extends StatelessWidget {
                       text: "Work",
                       color: Color(0xff009688),
                       size: 20,
-                      callback: () {},
+                      onPressed: () => timer.startWork(),
                     ),
                   ),
                   Padding(
@@ -51,7 +55,7 @@ class ProductivityHome extends StatelessWidget {
                       text: "Short Break",
                       color: Color(0xff607D8B),
                       size: 20,
-                      callback: () {},
+                      onPressed: () => timer.startBreak(true),
                     ),
                   ),
                   Padding(
@@ -62,7 +66,7 @@ class ProductivityHome extends StatelessWidget {
                       text: "Long Break",
                       color: Color(0xff455A64),
                       size: 20,
-                      callback: () {},
+                      onPressed: () => timer.startBreak(false),
                     ),
                   ),
                   Padding(
@@ -70,15 +74,24 @@ class ProductivityHome extends StatelessWidget {
                   ),
                 ],
               ),
-              Expanded(
-                child: CircularPercentIndicator(
-                  radius: availableHeight / 2,
-                  lineWidth: 5.0,
-                  percent: 1.0,
-                  center: new Text("100%"),
-                  progressColor: Colors.green,
-                ),
-              ),
+              StreamBuilder<TimerModel>(
+                  stream: timer.stream(),
+                  builder: (context, snapshot) {
+                    print("building");
+                    return Expanded(
+                      child: CircularPercentIndicator(
+                        radius: availableHeight / 2,
+                        lineWidth: 10.0,
+                        percent:
+                            snapshot.hasData ? snapshot.data.percentage : 0,
+                        center: new Text(
+                          '${snapshot.hasData ? snapshot.data.time : '00:00'}',
+                          style: Theme.of(context).textTheme.headline4,
+                        ),
+                        progressColor: Colors.green,
+                      ),
+                    );
+                  }),
               Row(
                 children: <Widget>[
                   Padding(
@@ -89,7 +102,7 @@ class ProductivityHome extends StatelessWidget {
                       text: "Stop",
                       color: Color(0xff212121),
                       size: 20,
-                      callback: () {},
+                      onPressed: () => timer.stopTimer(),
                     ),
                   ),
                   Padding(
@@ -100,7 +113,7 @@ class ProductivityHome extends StatelessWidget {
                       text: "Restart",
                       color: Color(0xff009688),
                       size: 20,
-                      callback: () {},
+                      onPressed: () => timer.startTimer(),
                     ),
                   ),
                   Padding(
