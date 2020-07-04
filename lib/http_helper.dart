@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_ninja/movie.dart';
 import 'package:http/http.dart' as http;
 
 class HttpHelper {
@@ -7,13 +9,16 @@ class HttpHelper {
   final String urlUpcoming = '/upcoming?';
   final String urlLanguage = '&language=en-US';
 
-  Future<String> getUpcoming() async {
+  Future<List> getUpcoming() async {
     final String url = '$urlBase$urlUpcoming$urlKey$urlLanguage';
     http.Response response = await http.get(url);
-
     if (response.statusCode == HttpStatus.ok) {
       String responseBody = response.body;
-      return responseBody;
+      final jsonResponse = jsonDecode(responseBody);
+      final moviesMap = jsonResponse['results'];
+      List movies =
+          moviesMap.map((movieMap) => Movie.fromJson(movieMap)).toList();
+      return movies;
     } else {
       return null;
     }
