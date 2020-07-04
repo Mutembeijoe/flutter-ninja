@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ninja/ball.dart';
 import 'package:flutter_ninja/bat.dart';
+import 'dart:math';
 
 enum Direction { up, down, right, left }
 
@@ -22,17 +23,30 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
   double batWidth = 0;
   double batHeight = 0;
   double batPosition = 0;
+  double randX = 1;
+  double randY = 1;
+
+  // create a random double between 0.5 - 1.5
+
+  double randomNumber() {
+    var ran = new Random();
+    int myNum = ran.nextInt(101);
+    return (50 + myNum) / 100;
+  }
 
   void checkBorders() {
     if (posX <= 0 && hdir == Direction.left) {
       hdir = Direction.right;
+      randX = randomNumber();
     }
     if (posX >= width - 50 && hdir == Direction.right) {
       hdir = Direction.left;
+      randX = randomNumber();
     }
     if (posY >= height - (50 + batHeight) && vdir == Direction.down) {
       if (posX >= (batPosition - 50) && posX <= (batPosition + 50 + batWidth)) {
         vdir = Direction.up;
+        randY = randomNumber();
       } else {
         controller.stop();
         dispose();
@@ -40,6 +54,7 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
     }
     if (posY <= 0 && vdir == Direction.up) {
       vdir = Direction.down;
+      randY = randomNumber();
     }
   }
 
@@ -59,11 +74,11 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
     animation.addListener(() {
       safeSetState(() {
         (hdir == Direction.right)
-            ? posX = posX + increment
-            : posX = posX - increment;
+            ? posX += ((increment * randX).round())
+            : posX -= ((increment * randX).round());
         (vdir == Direction.down)
-            ? posY = posY + increment
-            : posY = posY - increment;
+            ? posY += ((increment * randX).round())
+            : posY -= ((increment * randX).round());
       });
       checkBorders();
     });
