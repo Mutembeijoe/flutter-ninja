@@ -25,6 +25,7 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
   double batPosition = 0;
   double randX = 1;
   double randY = 1;
+  int score = 0;
 
   // create a random double between 0.5 - 1.5
 
@@ -47,9 +48,11 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
       if (posX >= (batPosition - 50) && posX <= (batPosition + 50 + batWidth)) {
         vdir = Direction.up;
         randY = randomNumber();
+        safeSetState(() => score++);
       } else {
         controller.stop();
-        dispose();
+        openDialogue(context);
+        // dispose();
       }
     }
     if (posY <= 0 && vdir == Direction.up) {
@@ -104,6 +107,14 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
           // alignment: Alignment.center,
           children: <Widget>[
             Positioned(
+              child: Text(
+                'Score: $score',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+              top: 0,
+              right: 50,
+            ),
+            Positioned(
               top: posY,
               left: posX,
               child: Ball(),
@@ -129,7 +140,6 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
 
   void moveBat(DragUpdateDetails update) {
     safeSetState(() {
-      print("moving bat");
       batPosition += update.delta.dx;
     });
   }
@@ -140,5 +150,36 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
         function();
       });
     }
+  }
+
+  void openDialogue(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Game Over"),
+        content: Text("Would you like to play again ?"),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              setState(() {
+                posX = 0;
+                posY = 0;
+                score = 0;
+              });
+              Navigator.of(context).pop();
+              controller.repeat();
+            },
+            child: Text("Yes"),
+          ),
+          FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              dispose();
+            },
+            child: Text("No"),
+          )
+        ],
+      ),
+    );
   }
 }
