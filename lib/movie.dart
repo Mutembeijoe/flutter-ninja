@@ -17,9 +17,9 @@ class Movie {
   Movie.fromJson(Map<String, dynamic> movieMap) {
     this.id = movieMap['id'];
     this.overview = movieMap['overview'];
-    this.posterPath = movieMap['posterPath'];
-    this.releaseDate = movieMap['releaseDate'];
+    this.posterPath = movieMap['poster_path'];
+    this.releaseDate = movieMap['release_date'];
     this.title = movieMap['title'];
-    this.voteAverage = movieMap['voteAverage'];
+    this.voteAverage = movieMap['vote_average'] * 1.0;
   }
 }
